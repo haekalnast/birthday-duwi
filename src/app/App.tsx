@@ -12,6 +12,9 @@ export default function App() {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
+      audioRef.current.play().catch((error) => {
+        console.log('Auto-play blocked:', error);
+      });
     }
   }, []);
 
@@ -36,10 +39,6 @@ export default function App() {
 
   const handlePasswordSuccess = () => {
     setIsUnlocked(true);
-    if (!isMuted) {
-      // Triggered from password submit interaction for better mobile autoplay compatibility.
-      playAudio();
-    }
   };
 
   return (

@@ -82,7 +82,7 @@ export function MainLandingPage() {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative animate-page-enter">
       <HeroSection onScrollToCandle={handleScrollToCandle} />
       <div ref={candleSectionRef}>
         <CandleSection onBlow={handleBlowCandles} candlesBlown={candlesBlown} />
@@ -93,6 +93,22 @@ export function MainLandingPage() {
       <div ref={gachaSectionRef}>
         <GachaSection />
       </div>
+
+      <style>{`
+        @keyframes page-enter {
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-page-enter {
+          animation: page-enter 0.7s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

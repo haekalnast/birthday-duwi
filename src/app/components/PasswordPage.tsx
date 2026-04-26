@@ -84,7 +84,7 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] flex items-center justify-center p-6 relative overflow-hidden">
       {/* Floating hearts background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(15)].map((_, i) => (
@@ -104,7 +104,7 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-sm">
+      <div className="relative z-10 w-full max-w-sm mx-auto flex items-center justify-center">
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border-4 border-pink-200">
           <div className="text-center mb-8">
             <div className="inline-block mb-4">

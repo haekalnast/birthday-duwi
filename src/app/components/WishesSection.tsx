@@ -6,7 +6,7 @@ interface WishesSectionProps {
 
 export function WishesSection({ onContinue }: WishesSectionProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(15)].map((_, i) => (
@@ -37,7 +37,7 @@ export function WishesSection({ onContinue }: WishesSectionProps) {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 max-w-md mx-auto">
+      <div className="relative z-10 w-full max-w-md mx-auto flex items-center justify-center">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border-4 border-pink-200">
           <div className="text-center mb-6">
             <div className="inline-block mb-4 animate-bounce">

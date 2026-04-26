@@ -83,34 +83,34 @@ export function HeroSection({ onScrollToCandle }: HeroSectionProps) {
 
         <div className="mb-8">
           {/* Banner */}
-          <div className="flex justify-center gap-2 mb-6 flex-wrap">
+          <div className="flex justify-center gap-1 sm:gap-2 mb-6">
             {['H', 'A', 'P', 'P', 'Y'].map((letter, i) => (
               <div
                 key={`happy-${i}`}
-                className="w-12 h-14 rounded-lg flex items-center justify-center shadow-lg animate-wave"
+                className="w-10 h-12 sm:w-12 sm:h-14 rounded-lg flex items-center justify-center shadow-lg animate-wave"
                 style={{
                   backgroundColor: '#F7A4BA',
                   color: 'white',
                   animationDelay: `${i * 0.1}s`,
                   fontFamily: 'Caveat, cursive',
-                  fontSize: '1.5rem',
+                  fontSize: '1.35rem',
                 }}
               >
                 {letter}
               </div>
             ))}
           </div>
-          <div className="flex justify-center gap-2 flex-wrap">
+          <div className="flex justify-center gap-1 sm:gap-2 flex-nowrap">
             {['B', 'I', 'R', 'T', 'H', 'D', 'A', 'Y'].map((letter, i) => (
               <div
                 key={`birthday-${i}`}
-                className="w-12 h-14 rounded-lg flex items-center justify-center shadow-lg animate-wave"
+                className="w-9 h-11 sm:w-12 sm:h-14 rounded-lg flex items-center justify-center shadow-lg animate-wave"
                 style={{
                   backgroundColor: '#FFB3C6',
                   color: 'white',
                   animationDelay: `${(i + 5) * 0.1}s`,
                   fontFamily: 'Caveat, cursive',
-                  fontSize: '1.5rem',
+                  fontSize: '1.2rem',
                 }}
               >
                 {letter}

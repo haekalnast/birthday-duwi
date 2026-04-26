@@ -14,7 +14,7 @@ const guaranteedGifts = [
 const allGifts = [
   { emoji: '💰', name: 'Biaya Pendaftaran Kuliah', description: 'Bantuan biaya pendaftaran kuliahmu' },
   { emoji: '💍', name: 'Cincin Lamaran', description: 'Cincin spesial untuk langkah selanjutnya' },
-  { emoji: '🪙', name: 'Emas', description: 'Emas batangan untuk investasi' },
+  { emoji: '🥇', name: 'Mahar Emas', description: 'Mahar emas spesial untuk hari bahagia kita' },
   { emoji: '🌹', name: 'Bunga', description: 'Buket bunga cantik untukmu' },
   { emoji: '🥤', name: 'Tumbler Premium', description: 'Tumbler cantik untuk menemani hari-harimu' },
   { emoji: '💒', name: 'Nikah di KUA', description: 'Biaya nikah di KUA' },
@@ -91,7 +91,7 @@ export function GachaSection() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -123,8 +123,8 @@ export function GachaSection() {
 
       {/* Main content */}
       <div className="relative z-10 max-w-md mx-auto w-full">
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border-4 border-pink-200">
-          <div className="text-center mb-6">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-5 sm:p-8 border-4 border-pink-200">
+          <div className="text-center mb-4 sm:mb-6">
             <div className="flex justify-center gap-2 mb-4">
               <PartyPopper className="w-8 h-8 text-pink-400 animate-bounce" />
               <Gift className="w-8 h-8 text-pink-500 animate-pulse" />
@@ -164,6 +164,41 @@ export function GachaSection() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-3">
+              {gachaCount < maxGachaCount ? (
+                <button
+                  onClick={handleGacha}
+                  disabled={isSpinning}
+                  className="w-full py-3 rounded-2xl shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  style={{ backgroundColor: '#F7A4BA', color: '#5D3A4A' }}
+                >
+                  <Gift className="w-5 h-5" />
+                  <span>{isSpinning ? 'Mengocok...' : 'Gacha Hadiah!'}</span>
+                  <Gift className="w-5 h-5" />
+                </button>
+              ) : (
+                <div className="bg-pink-50 rounded-2xl p-4 text-center border-2 border-pink-100">
+                  <h3 className="text-xl mb-2" style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}>
+                    Selamat! 🎉
+                  </h3>
+                  <p className="text-xs mb-3" style={{ color: '#5D3A4A' }}>
+                    Kamu sudah mendapatkan {revealedGifts.length} hadiah spesial!
+                    Aku akan wujudkan semua hadiah ini untukmu, sayang! 💕
+                  </p>
+                  <div className="flex justify-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Heart
+                        key={i}
+                        className="w-4 h-4 text-pink-400 animate-pulse"
+                        style={{ animationDelay: `${i * 0.1}s` }}
+                        fill="currentColor"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -214,42 +249,8 @@ export function GachaSection() {
             </div>
           )}
 
-          {/* Action button */}
-          {gachaCount < maxGachaCount ? (
-            <button
-              onClick={handleGacha}
-              disabled={isSpinning}
-              className="w-full py-4 rounded-2xl shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#F7A4BA', color: '#5D3A4A' }}
-            >
-              <Gift className="w-5 h-5" />
-              <span>{isSpinning ? 'Mengocok...' : 'Gacha Hadiah!'}</span>
-              <Gift className="w-5 h-5" />
-            </button>
-          ) : (
-            <div className="bg-pink-50 rounded-2xl p-4 text-center border-2 border-pink-100">
-              <h3 className="text-xl mb-2" style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}>
-                Selamat! 🎉
-              </h3>
-              <p className="text-xs mb-3" style={{ color: '#5D3A4A' }}>
-                Kamu sudah mendapatkan {revealedGifts.length} hadiah spesial!
-                Aku akan wujudkan semua hadiah ini untukmu, sayang! 💕
-              </p>
-              <div className="flex justify-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Heart
-                    key={i}
-                    className="w-4 h-4 text-pink-400 animate-pulse"
-                    style={{ animationDelay: `${i * 0.1}s` }}
-                    fill="currentColor"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Footer message */}
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p className="text-xs" style={{ color: '#9D7A88' }}>
               Made with 💖 for my beloved Dwi Suryani Mulato
             </p>

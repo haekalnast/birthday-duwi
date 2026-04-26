@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { PasswordPage } from './components/PasswordPage';
 import { MainLandingPage } from './components/MainLandingPage';
+import birthdaySong from '../assets/audio/Birthday Song.mp3';
 
 export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -10,17 +11,22 @@ export default function App() {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.3;
-      audioRef.current.play().catch((error) => {
-        console.log('Auto-play prevented:', error);
-      });
+      audioRef.current.volume = 0.4;
     }
   }, []);
+
+  const playAudio = () => {
+    if (!audioRef.current) return;
+
+    audioRef.current.play().catch((error) => {
+      console.log('Audio play blocked:', error);
+    });
+  };
 
   const toggleMute = () => {
     if (audioRef.current) {
       if (isMuted) {
-        audioRef.current.play();
+        playAudio();
       } else {
         audioRef.current.pause();
       }
@@ -30,13 +36,15 @@ export default function App() {
 
   const handlePasswordSuccess = () => {
     setIsUnlocked(true);
+    if (!isMuted) {
+      // Triggered from password submit interaction for better mobile autoplay compatibility.
+      playAudio();
+    }
   };
 
   return (
     <div className="w-full min-h-screen overflow-x-hidden">
-      <audio ref={audioRef} loop>
-        <source src="https://www.orangefreesounds.com/wp-content/uploads/2014/08/Happy-birthday-song.mp3" type="audio/mpeg" />
-      </audio>
+      <audio ref={audioRef} src={birthdaySong} loop preload="auto" />
 
       <button
         onClick={toggleMute}

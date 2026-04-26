@@ -1,9 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { PasswordPage } from './components/PasswordPage';
 import { MainLandingPage } from './components/MainLandingPage';
 
 export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.play().catch((error) => {
+        console.log('Auto-play prevented:', error);
+      });
+    }
+  }, []);
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+      setIsMuted(!isMuted);
+    }
+  };
 
   const handlePasswordSuccess = () => {
     setIsUnlocked(true);
@@ -11,6 +34,23 @@ export default function App() {
 
   return (
     <div className="w-full min-h-screen overflow-x-hidden">
+      <audio ref={audioRef} loop>
+        <source src="https://www.orangefreesounds.com/wp-content/uploads/2014/08/Happy-birthday-song.mp3" type="audio/mpeg" />
+      </audio>
+
+      <button
+        onClick={toggleMute}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        style={{ backgroundColor: '#F7A4BA' }}
+        aria-label={isMuted ? 'Play birthday song' : 'Pause birthday song'}
+      >
+        {isMuted ? (
+          <VolumeX className="w-6 h-6" style={{ color: '#5D3A4A' }} />
+        ) : (
+          <Volume2 className="w-6 h-6 animate-pulse" style={{ color: '#5D3A4A' }} />
+        )}
+      </button>
+
       {!isUnlocked ? (
         <PasswordPage onSuccess={handlePasswordSuccess} />
       ) : (

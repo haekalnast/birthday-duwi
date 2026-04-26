@@ -57,7 +57,7 @@ export function WishesSection({ onContinue }: WishesSectionProps) {
             </p>
 
             <div className="bg-pink-50/50 rounded-2xl p-3 border-2 border-pink-100">
-              <p className="leading-relaxed text-xs">
+              <p className="leading-relaxed text-xs text-center">
                 Di hari istimewa ini, aku berharap semua impian kamu bisa terwujud. Semoga kamu selalu dikelilingi kebahagiaan dan cinta yang berlimpah. ❤️
               </p>
             </div>

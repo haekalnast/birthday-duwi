@@ -11,6 +11,7 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [daysLeft, setDaysLeft] = useState(0);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const userPassword = '20051996'; // Duwi's password - only works on birthday
   const adminPassword = 'mrbean'; // Admin password - works anytime
@@ -144,13 +145,18 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
                   placeholder="Masukkan Password"
                   className={`w-full px-6 py-4 pr-14 rounded-2xl border-2 transition-all outline-none ${
                     error
                       ? 'border-red-300 bg-red-50'
-                      : 'border-pink-200 bg-pink-50/50 focus:border-pink-400 focus:bg-white'
+                      : `border-pink-200 bg-pink-50/50 ${
+                          isInputFocused ? 'border-pink-400 bg-white ring-4 ring-pink-200/60 shadow-md' : 'focus:border-pink-400 focus:bg-white'
+                        }`
                   }`}
                   style={{ color: '#5D3A4A' }}
+                  autoFocus
                 />
                 <button
                   type="button"

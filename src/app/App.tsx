@@ -8,15 +8,41 @@ export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const hasInitializedAudioRef = useRef(false);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
-      audioRef.current.play().catch((error) => {
-        console.log('Auto-play blocked:', error);
-      });
+      if (!isMuted) {
+        audioRef.current.play().catch((error) => {
+          console.log('Auto-play blocked:', error);
+        });
+      }
     }
-  }, []);
+  }, [isMuted]);
+
+  useEffect(() => {
+    const initializeAudioOnFirstInteraction = () => {
+      if (hasInitializedAudioRef.current || isMuted) return;
+
+      hasInitializedAudioRef.current = true;
+      if (audioRef.current) {
+        audioRef.current.play().catch((error) => {
+          console.log('Interaction play blocked:', error);
+        });
+      }
+    };
+
+    window.addEventListener('pointerdown', initializeAudioOnFirstInteraction, { once: true });
+    window.addEventListener('touchstart', initializeAudioOnFirstInteraction, { once: true });
+    window.addEventListener('keydown', initializeAudioOnFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', initializeAudioOnFirstInteraction);
+      window.removeEventListener('touchstart', initializeAudioOnFirstInteraction);
+      window.removeEventListener('keydown', initializeAudioOnFirstInteraction);
+    };
+  }, [isMuted]);
 
   const playAudio = () => {
     if (!audioRef.current) return;
@@ -39,11 +65,14 @@ export default function App() {
 
   const handlePasswordSuccess = () => {
     setIsUnlocked(true);
+    if (!isMuted) {
+      playAudio();
+    }
   };
 
   return (
     <div className="w-full min-h-screen overflow-x-hidden">
-      <audio ref={audioRef} src={birthdaySong} loop preload="auto" />
+      <audio ref={audioRef} src={birthdaySong} loop preload="auto" playsInline autoPlay />
 
       <button
         onClick={toggleMute}

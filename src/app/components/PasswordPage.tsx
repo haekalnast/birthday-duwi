@@ -10,14 +10,14 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [daysLeft, setDaysLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   const userPassword = '20051996'; // Duwi's password - only works on birthday
   const adminPassword = 'mrbean'; // Admin password - works anytime
 
   useEffect(() => {
-    const calculateDaysLeft = () => {
+    const calculateTimeLeft = () => {
       const now = new Date();
       const currentYear = now.getFullYear();
 
@@ -29,17 +29,22 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
         birthday = new Date(currentYear + 1, 4, 20, 0, 0, 0);
       }
 
-      const diff = birthday.getTime() - now.getTime();
-      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      const diff = Math.max(0, birthday.getTime() - now.getTime());
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
 
-      setDaysLeft(days);
+      setTimeLeft({ hours, minutes, seconds });
     };
 
-    calculateDaysLeft();
-    const timer = setInterval(calculateDaysLeft, 1000 * 60 * 60); // Update every hour
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
   }, []);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
 
   const isBirthday = () => {
     const now = new Date();
@@ -125,15 +130,26 @@ export function PasswordPage({ onSuccess }: PasswordPageProps) {
                   Countdown Ulang Tahun
                 </p>
               </div>
-              <div className="flex justify-center">
-                <div className="text-center">
-                  <div className="bg-white rounded-lg px-8 py-3 shadow-sm">
-                    <p className="text-4xl mb-1" style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}>
-                      {daysLeft}
-                    </p>
-                    <p className="text-xs" style={{ color: '#9D7A88' }}>Hari Lagi</p>
+              <div className="flex justify-center gap-2">
+                {[
+                  { value: pad(timeLeft.hours), label: 'Jam' },
+                  { value: pad(timeLeft.minutes), label: 'Menit' },
+                  { value: pad(timeLeft.seconds), label: 'Detik' },
+                ].map((unit) => (
+                  <div key={unit.label} className="text-center flex-1">
+                    <div className="bg-white rounded-lg px-2 py-3 shadow-sm">
+                      <p
+                        className="text-2xl sm:text-3xl mb-1 tabular-nums"
+                        style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}
+                      >
+                        {unit.value}
+                      </p>
+                      <p className="text-[10px] sm:text-xs" style={{ color: '#9D7A88' }}>
+                        {unit.label}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

@@ -2,30 +2,45 @@ import { useState } from 'react';
 import { Gift, Heart, Sparkles, PartyPopper } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-// Hadiah yang pasti didapat (tapi hanya 3 dari 4 ini)
-const guaranteedGifts = [
-  { emoji: '💰', name: 'Biaya Pendaftaran Kuliah', description: 'Bantuan biaya pendaftaran kuliahmu' },
-  { emoji: '💍', name: 'Cincin Lamaran', description: 'Cincin spesial untuk langkah selanjutnya' },
-  { emoji: '🌹', name: 'Bunga', description: 'Buket bunga cantik untukmu' },
-  { emoji: '🥤', name: 'Tumbler Premium', description: 'Tumbler cantik untuk menemani hari-harimu' },
+type Gift = { id: string; emoji: string; name: string; description: string };
+
+// 3 hadiah yang pasti didapat (urutan random)
+const guaranteedGifts: Gift[] = [
+  {
+    id: 'bunga',
+    emoji: '🤍',
+    name: 'Bunga Lily Putih',
+    description: 'Buket bunga lily putih / bunga putih yang cantik untukmu',
+  },
+  {
+    id: 'tumbler',
+    emoji: '🥤',
+    name: 'Hydro Flask Birch 21oz',
+    description: 'Hydro Flask Standard Flex Straw Cap Tonal Birch 21 oz',
+  },
+  {
+    id: 'sepatu',
+    emoji: '👟',
+    name: 'Hijack Flo Silven',
+    description: 'Sepatu Hijack Flo Silven spesial untukmu',
+  },
 ];
 
-// Semua hadiah yang ditampilkan saat spin (termasuk yang tidak akan didapat)
-const allGifts = [
-  { emoji: '💰', name: 'Biaya Pendaftaran Kuliah', description: 'Bantuan biaya pendaftaran kuliahmu' },
-  { emoji: '💍', name: 'Cincin Lamaran', description: 'Cincin spesial untuk langkah selanjutnya' },
-  { emoji: '🥇', name: 'Mahar Emas', description: 'Mahar emas spesial untuk hari bahagia kita' },
-  { emoji: '🌹', name: 'Bunga', description: 'Buket bunga cantik untukmu' },
-  { emoji: '🥤', name: 'Tumbler Premium', description: 'Tumbler cantik untuk menemani hari-harimu' },
-  { emoji: '💒', name: 'Nikah di KUA', description: 'Biaya nikah di KUA' },
-  { emoji: '📱', name: 'HP iPhone', description: 'iPhone terbaru untukmu' },
-  { emoji: '💻', name: 'Laptop MacBook', description: 'MacBook untuk kerja dan kuliah' },
-  { emoji: '🏍️', name: 'Motor Baru', description: 'Motor baru untuk mobilitas' },
+// Pilihan kreatif saat spin (decoy — tidak akan didapat)
+const decoyGifts: Gift[] = [
+  { id: 'mahar', emoji: '🥇', name: 'Mahar Antam', description: 'Mahar emas Antam untuk hari bahagia kita' },
+  { id: 'tiffany', emoji: '💎', name: 'Cincin Tiffany & Co', description: 'Cincin Tiffany & Co. yang berkilau' },
+  { id: 'kuliah', emoji: '🎓', name: 'Biaya Kuliah UT', description: 'Biaya kuliah di Universitas Terbuka' },
+  { id: 'kua', emoji: '💒', name: 'Nikah di KUA', description: 'Paket nikah resmi di KUA' },
+  { id: 'iphone', emoji: '📱', name: 'iPhone 14', description: 'HP iPhone 14 impianmu' },
+  { id: 'macbook', emoji: '💻', name: 'MacBook Air M1', description: 'Laptop MacBook Air M1 untuk kuliah & kerja' },
 ];
+
+const allGifts: Gift[] = [...guaranteedGifts, ...decoyGifts];
 
 export function GachaSection() {
   const [isSpinning, setIsSpinning] = useState(false);
-  const [revealedGifts, setRevealedGifts] = useState<typeof allGifts>([]);
+  const [revealedGifts, setRevealedGifts] = useState<Gift[]>([]);
   const [currentEmoji, setCurrentEmoji] = useState('🎁');
   const [gachaCount, setGachaCount] = useState(0);
   const maxGachaCount = 3;
@@ -46,12 +61,11 @@ export function GachaSection() {
 
         // Select from guaranteed gifts only (that haven't been revealed)
         const availableGuaranteedGifts = guaranteedGifts.filter(
-          g => !revealedGifts.some(r => r.name === g.name)
+          g => !revealedGifts.some(r => r.id === g.id)
         );
 
-        const selectedGift = availableGuaranteedGifts.length > 0
-          ? availableGuaranteedGifts[Math.floor(Math.random() * availableGuaranteedGifts.length)]
-          : guaranteedGifts[Math.floor(Math.random() * guaranteedGifts.length)];
+        const selectedGift =
+          availableGuaranteedGifts[Math.floor(Math.random() * availableGuaranteedGifts.length)];
 
         setRevealedGifts(prev => [...prev, selectedGift]);
         setCurrentEmoji(selectedGift.emoji);
@@ -147,11 +161,11 @@ export function GachaSection() {
               Pilihan Hadiah:
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {allGifts.map((gift, index) => (
+              {allGifts.map((gift) => (
                 <div
-                  key={index}
+                  key={gift.id}
                   className={`bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-2 border-2 transition-all ${
-                    revealedGifts.some(r => r.name === gift.name)
+                    revealedGifts.some(r => r.id === gift.id)
                       ? 'border-pink-400 shadow-lg scale-105'
                       : 'border-pink-200'
                   }`}

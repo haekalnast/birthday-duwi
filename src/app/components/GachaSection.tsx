@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Gift, Heart, Sparkles, PartyPopper } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 type Gift = { id: string; emoji: string; name: string; description: string };
+
+function shuffleGifts<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 // 3 hadiah yang pasti didapat (urutan random)
 const guaranteedGifts: Gift[] = [
@@ -28,7 +37,7 @@ const guaranteedGifts: Gift[] = [
 
 // Pilihan kreatif saat spin (decoy — tidak akan didapat)
 const decoyGifts: Gift[] = [
-  { id: 'mahar', emoji: '🥇', name: 'Mahar Antam', description: 'Mahar emas Antam untuk hari bahagia kita' },
+  { id: 'mahar', emoji: '🥇', name: 'Mahar Antam 10 Gram', description: 'Mahar emas Antam 10 gram untuk hari bahagia kita' },
   { id: 'tiffany', emoji: '💎', name: 'Cincin Tiffany & Co', description: 'Cincin Tiffany & Co. yang berkilau' },
   { id: 'kuliah', emoji: '🎓', name: 'Biaya Kuliah UT', description: 'Biaya kuliah di Universitas Terbuka' },
   { id: 'kua', emoji: '💒', name: 'Nikah di KUA', description: 'Paket nikah resmi di KUA' },
@@ -36,9 +45,13 @@ const decoyGifts: Gift[] = [
   { id: 'macbook', emoji: '💻', name: 'MacBook Air M1', description: 'Laptop MacBook Air M1 untuk kuliah & kerja' },
 ];
 
-const allGifts: Gift[] = [...guaranteedGifts, ...decoyGifts];
-
 export function GachaSection() {
+  const displayGifts = useMemo(
+    () => shuffleGifts([...guaranteedGifts, ...decoyGifts]),
+    []
+  );
+  const [awardQueue] = useState(() => shuffleGifts(guaranteedGifts));
+
   const [isSpinning, setIsSpinning] = useState(false);
   const [revealedGifts, setRevealedGifts] = useState<Gift[]>([]);
   const [currentEmoji, setCurrentEmoji] = useState('🎁');
@@ -53,19 +66,13 @@ export function GachaSection() {
     // Spinning animation - show all gifts during spin
     let counter = 0;
     const spinInterval = setInterval(() => {
-      setCurrentEmoji(allGifts[Math.floor(Math.random() * allGifts.length)].emoji);
+      setCurrentEmoji(displayGifts[Math.floor(Math.random() * displayGifts.length)].emoji);
       counter++;
 
       if (counter > 20) {
         clearInterval(spinInterval);
 
-        // Select from guaranteed gifts only (that haven't been revealed)
-        const availableGuaranteedGifts = guaranteedGifts.filter(
-          g => !revealedGifts.some(r => r.id === g.id)
-        );
-
-        const selectedGift =
-          availableGuaranteedGifts[Math.floor(Math.random() * availableGuaranteedGifts.length)];
+        const selectedGift = awardQueue[gachaCount];
 
         setRevealedGifts(prev => [...prev, selectedGift]);
         setCurrentEmoji(selectedGift.emoji);
@@ -161,7 +168,7 @@ export function GachaSection() {
               Pilihan Hadiah:
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {allGifts.map((gift) => (
+              {displayGifts.map((gift) => (
                 <div
                   key={gift.id}
                   className={`bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-2 border-2 transition-all ${
@@ -180,8 +187,8 @@ export function GachaSection() {
               ))}
             </div>
 
-            <div className="mt-3">
-              {gachaCount < maxGachaCount ? (
+            {gachaCount < maxGachaCount && (
+              <div className="mt-3">
                 <button
                   onClick={handleGacha}
                   disabled={isSpinning}
@@ -192,28 +199,8 @@ export function GachaSection() {
                   <span>{isSpinning ? 'Mengocok...' : 'Gacha Hadiah!'}</span>
                   <Gift className="w-5 h-5" />
                 </button>
-              ) : (
-                <div className="bg-pink-50 rounded-2xl p-4 text-center border-2 border-pink-100">
-                  <h3 className="text-xl mb-2" style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}>
-                    Selamat! 🎉
-                  </h3>
-                  <p className="text-xs mb-3" style={{ color: '#5D3A4A' }}>
-                    Kamu sudah mendapatkan {revealedGifts.length} hadiah spesial!
-                    Aku akan wujudkan semua hadiah ini untukmu, sayang! 💕
-                  </p>
-                  <div className="flex justify-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Heart
-                        key={i}
-                        className="w-4 h-4 text-pink-400 animate-pulse"
-                        style={{ animationDelay: `${i * 0.1}s` }}
-                        fill="currentColor"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Gacha display */}
@@ -245,8 +232,8 @@ export function GachaSection() {
           {/* Revealed gifts list */}
           {revealedGifts.length > 0 && (
             <div className="mb-4 space-y-2 animate-fade-in">
-              {revealedGifts.map((gift, index) => (
-                <div key={index} className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-3 border-2 border-pink-200">
+              {revealedGifts.map((gift) => (
+                <div key={gift.id} className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-3 border-2 border-pink-200">
                   <div className="flex items-center gap-2">
                     <div className="text-2xl">{gift.emoji}</div>
                     <div className="flex-1 text-left">
@@ -260,6 +247,28 @@ export function GachaSection() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {gachaCount >= maxGachaCount && (
+            <div className="mb-4 bg-pink-50 rounded-2xl p-4 text-center border-2 border-pink-100 animate-fade-in">
+              <h3 className="text-xl mb-2" style={{ fontFamily: 'Caveat, cursive', color: '#F7A4BA' }}>
+                Selamat! 🎉
+              </h3>
+              <p className="text-xs mb-3" style={{ color: '#5D3A4A' }}>
+                Kamu sudah mendapatkan {revealedGifts.length} hadiah spesial!
+                Aku akan wujudkan semua hadiah ini untukmu, sayang! 💕
+              </p>
+              <div className="flex justify-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Heart
+                    key={i}
+                    className="w-4 h-4 text-pink-400 animate-pulse"
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                    fill="currentColor"
+                  />
+                ))}
+              </div>
             </div>
           )}
 
